@@ -242,11 +242,16 @@ class YoloUtil:
             # 否则，直接使用输入的图像（假定已经是NumPy数组）
             result_image = image
         # 预处理图像数据，调整图像大小并可能进行归一化等操作
+        time1 = time.time() * 1000
         img_data, img_height, img_width = self.preprocess(result_image, input_width, input_height)
+        time2 = time.time() * 1000
         # 使用预处理后的图像数据进行推理
         outputs = session.run(None, {model_inputs[0].name: img_data})
+        time3 = time.time() * 1000
         # 对推理结果进行后处理，例如解码检测框，过滤低置信度的检测等
         output_image = self.postprocess(result_image, outputs, input_width, input_height, img_width, img_height)
+        time4 = time.time() * 1000
+        # print(f'preprocess cost: {(time2 - time1):.2f}ms, inference cost: {(time3 - time2):.2f}ms, postprocess cost: {(time4 - time3):.2f}ms')
         # 返回处理后的图像
         return output_image
 

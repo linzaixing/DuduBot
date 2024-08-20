@@ -72,10 +72,14 @@ class CameraController:
 
         # 初始化帧数计数器和起始时间
         frame_count = 0
-        start_time = time.time()
+        start_time = time.time() * 1000
         while True:
             # 读取帧
             self.ret, self.frame = self.cap.read()
+            next_time = time.time() * 1000
+            # print(f'frame_count: {frame_count}, cost time: {next_time - start_time}')
+            start_time = next_time
+            frame_count += 1
 
             # 如果没有正确读取帧，ret为False
             if not self.ret:
@@ -91,15 +95,13 @@ class CameraController:
                                                     self.input_width,
                                                     self.input_height)
                 # 计算帧速率
-                frame_count += 1
-                end_time = time.time()
-                elapsed_time = (end_time - start_time) * 1000
-                fps = frame_count / (end_time - start_time)
-                aver_cost = elapsed_time / frame_count
+                end_time = time.time() * 1000
+                elapsed_time = end_time - start_time
+                fps = 1000 / elapsed_time
 
                 # 将FPS绘制在图像上
                 cv2.putText(output_image,
-                            f"{frame_count}, FPS: {fps:.2f}, cost: {aver_cost:.2f} ms",
+                            f"{frame_count}, FPS: {fps:.2f}, cost: {elapsed_time:.2f} ms",
                             (10, 30),
                             cv2.FONT_HERSHEY_SIMPLEX,
                             1,

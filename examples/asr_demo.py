@@ -45,7 +45,7 @@ recognition.start()
 
 while True:
     if stream:
-        data = stream.read(3200, exception_on_overflow = False)
+        data = stream.read(1000, exception_on_overflow = False)
         recognition.send_audio_frame(data)
     else:
         break

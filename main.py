@@ -54,7 +54,7 @@ class AsrCallback(RecognitionCallback):
                 end_time = sentence['end_time']
             print('me: ' + text)
 
-            if "相机" in text or "摄像头" in text or '检测' in text or '开始录像' in text or '拍张照片' in text or "浏览器" in text or "请问" in text or '退出对话' in text:
+            if "相机" in text or "摄像头" in text or '检测' in text or '开始录像' in text or '拍张照片' in text or "浏览器" in text or '你好' in text or '退出对话' in text:
                 if history_text == text:
                     print('与历史记录重复，忽略系统生成音频的输入', history_text)
                     pass
@@ -116,18 +116,19 @@ class TtsCallback(ResultCallback):
 
 # 调用语音转文字大模型
 def create_text(callback):
-    recognition = Recognition(model='paraformer-realtime-v2', format='pcm', sample_rate=16000, callback=callback)
+    # paraformer-realtime-v1 和 paraformer-realtime-v2 仅支持16khz  paraformer-realtime-8k-v1
+    recognition = Recognition(model='paraformer-realtime-v1', format='pcm', sample_rate=16000, callback=callback)
     return recognition
 
 
 # 调用文字转语音大模型
 def create_voice(text_content, tts_callback):
     SpeechSynthesizer.call(
-        model='sambert-zhiya-v1',  # 语言调整模型，萝莉音等等
+        model='sambert-zhiying-v1',  # 语言调整模型，萝莉音等等
         text=text_content,
         sample_rate=48000,
         format='pcm',
-        rate=1,
+        rate=1.2,
         pitch=1,
         volume=80,
         callback=tts_callback
@@ -187,7 +188,7 @@ def tts_thread_func(tts_callback):
                     os.system('taskkill /IM chrome.exe /F')
                 else:
                     return "暂不支持关闭该平台"
-            elif '请问' in current_text:
+            elif '你好' in current_text:
                 response_message = sample_sync_call(current_text)
             else:
                 new_message_event.clear()
